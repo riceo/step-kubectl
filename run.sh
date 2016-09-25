@@ -2,8 +2,30 @@
 
 kubectl="$WERCKER_STEP_ROOT/kubectl"
 
+# This step is carried out
+gcloud_auth_config() {
+
+  cat $WERCKER_KUBECTL_GCLOUD_KEY_JSON > $WERCKER_STEP_ROOT/gcloud.json
+
+  gcloud="$WERCKER_STEP_ROOT/gcloud"
+
+  if ! gcloud auth activate-service-account --key-file ${GCLOUD_CREDS_FILE}; then
+    fail "Unable to authenticate with Google Cloud..."
+  fi
+
+  export GOOGLE_APPLICATION_CREDENTIALS=${GCLOUD_CREDS_FILE}
+}
+
 main() {
   display_version
+
+  if [ -n "$WERCKER_KUBECTL_GCLOUD_KEY_JSON"]; then
+    # Google cloud key JSON found. We'll assume kubectl
+    # needs access to a GKE cluster, and will configure kubectl
+    # to use the service account that should be defined in the JSON string.
+    echo "Configuring gcloud service account"
+    gcloud_auth_config()
+  fi
 
   if [ -z "$WERCKER_KUBECTL_COMMAND" ]; then
     fail "wercker-kubectl: command argument cannot be empty"

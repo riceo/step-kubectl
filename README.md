@@ -58,11 +58,20 @@ deploy:
           command: create -f cities-controller.json
 ```
 
+# Google Container Engine (GKE) clusters
+
+Passing a Google service account JSON keyfile as a string in optional parameter `gcloud-key-json` within your wercker.yml
+will cause this script to use the gcloud cli utility to configure kubectl's access to GKE.
+
 # License
 
 The MIT License (MIT)
 
 # Changelog
+
+## 3.1.0
+
+- Add support for authenticating kubectl with GKE clusters with a Google service account.
 
 ## 3.0.0
 
