@@ -20,7 +20,7 @@ main() {
   display_version
 
   if [ -n "$WERCKER_KUBECTL_GCLOUD_KEY_JSON"]; then
-    # Google cloud key JSON found. We'll assume kubectl
+    # Google cloud key JSON found. We'll assume that kubectl
     # needs access to a GKE cluster, and will configure kubectl
     # to use the service account that should be defined in the JSON string.
     echo "Configuring gcloud service account"
