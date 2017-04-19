@@ -8,12 +8,31 @@ build:
             code: |
                 GCLOUD_VERSION="127.0.0-linux-x86_64"
                 export GCLOUD_DIRNAME="google-cloud-sdk"
-                export KUBERNETES_VERSION="1.3.4"
-                export KUBERNETES_SHA256="81f0e3c788241419be1ee961da8804fdb16657b86e7edba8c7070932e8a50fe7"
+                export KUBERNETES_VERSION="1.6.0"
+                export KUBERNETES_SHA256="c488d77cd980ca7dae03bc684e19bd6a329962e32ed7a1bc9c4d560ed433399a"
                 export GCLOUD_SHA="45abe78986b0ff9a147904aaf20d552fa4ad6f29"
                 export GCLOUD_FILENAME="${GCLOUD_DIRNAME}-${GCLOUD_VERSION}.tar.gz"
                 export GCLOUD_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/${GCLOUD_FILENAME}"
+                export UPX_VERSION="3.93"
+                export UPX_SHA="db4ec36b930e7d7e082d93124a59d38fbaedd1c0"
+                export UPX_DIRNAME="upx-${UPX_VERSION}-amd64_linux"
+                export UPX_FILENAME="${UPX_DIRNAME}.tar.xz"
+                export UPX_URL="https://github.com/upx/upx/releases/download/v${UPX_VERSION}/${UPX_FILENAME}"
                 echo "Installing version $KUBERNETES_VERSION of kubernetes and ${GCLOUD_VERSION} of the Google Cloud SDK"
+        - script:
+            name: fetch upx
+            code: |
+                curl -L ${UPX_URL} -o ${UPX_FILENAME}
+
+        - script:
+            name: validate upx archive
+            code: |
+                sha1sum ${UPX_FILENAME} | grep -q "${UPX_SHA}"
+
+        - script:
+            name: Extract upx archive
+            code: |
+                tar -xf ${UPX_FILENAME}
 
         - script:
             name: fetch kubernetes archive
@@ -56,3 +75,9 @@ build:
                 cp  "${WERCKER_ROOT}/LICENSE" "${WERCKER_ROOT}/README.md" "${WERCKER_ROOT}/run.sh" "${WERCKER_ROOT}/wercker.yml" "${WERCKER_ROOT}/wercker-step.yml" "$WERCKER_OUTPUT_DIR"
                 chmod ugo+rx "$WERCKER_OUTPUT_DIR/${GCLOUD_DIRNAME}/bin/gcloud"
                 chmod ugo+rx "$WERCKER_OUTPUT_DIR/kubectl"
+
+        - script:
+            name: Compress kubectl
+            code: |
+                ${UPX_DIRNAME}/upx $WERCKER_OUTPUT_DIR/kubectl
+
