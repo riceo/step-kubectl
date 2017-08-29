@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GCLOUD_INSTALL_DIR="$WERCKER_STEP_ROOT/google-cloud-sdk/bin/"
+GCLOUD_INSTALL_DIR="$WERCKER_STEP_ROOT/google-cloud-sdk/bin"
 kubectl="$GCLOUD_INSTALL_DIR/kubectl"
 
 gcloud_auth_config() {
